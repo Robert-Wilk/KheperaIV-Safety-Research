@@ -168,7 +168,6 @@ def set_velocities(sim, robots, vs):
     n = vs.shape[1]
 
     for i in range(0, n):
-
         # index 0 is linear values (0v, 1w, 2w, ...)
         # index 1 is angular values (0w, 1w, 2w, ...)
 

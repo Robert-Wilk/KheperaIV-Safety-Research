@@ -14,7 +14,7 @@ This code also utilizes snippets from the [Robotarium Python Simulator](https://
 3. Import the scene you choose into CoppeliaSim
 4. Run any of the Python files inside the "code" folder that contain \*_controller\*
 
-### Current Issues:
+### Current Issues (As of 10/17/2022):
 - Robots might spin in some scripts before everything is fully initialized in the simulator
 - Robots might not fully stop after given command to stop
 - multi_controller_CBF.py doesn't generalize well to 8 robots

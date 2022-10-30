@@ -44,7 +44,7 @@ x_goal = targets.T
 safety_radius = 0.20
 
 # We're working in unicycle dynamics, and we don't want the robots
-# to collide.  Thus, we're going to use barrier certificates
+# to collide.  Thus, we're going to use unicycle barrier certificates
 # TODO: play around with the unicycle barrier certificate functions robotarium offers
 uni_barrier_cert = create_unicycle_barrier_certificate(safety_radius=safety_radius)
 

@@ -1,11 +1,11 @@
 # KheperaIV-Safety-Research
-CBF, SBC, and PrSBC research on Khepera IV robots using CoppeliaSim
+CBF, SBC, and PrSBC research on Khepera IV robots in simulated and real-world environments
 
 
 This code utilizes the KheperaIV which is not native to CoppeliaSim. To add the KheperaIV robot to CoppeliaSim head to [this Github repo](https://github.com/EAPH/K4_Model_VREP), download the files, and import into CoppeliaSim. To learn more about the KheperaIV robot model in CoppeliaSim check out [Farias et al.'s research paper](https://doi.org/10.1016/j.ifacol.2017.08.1721).
 
 
-This code also utilizes snippets from the [Robotarium Python Simulator](https://github.com/robotarium/robotarium_python_simulator).
+This code also utilizes snippets from the [Robotarium Python Simulator](https://github.com/robotarium/robotarium_python_simulator) and [Swarm Setup from CMU](https://github.com/michael5511b/CMU-AART-Swarm-Platform-ROS-Package).
 
 ### How to use:
 1. Download CoppeliaSim
@@ -14,8 +14,8 @@ This code also utilizes snippets from the [Robotarium Python Simulator](https://
 3. Import the scene you choose into CoppeliaSim
 4. Run any of the Python files inside the "code" folder that contain \*_controller\*
 
-### Current Issues (As of 10/17/2022):
-- Robots might spin in some scripts before everything is fully initialized in the simulator
-- Robots might not fully stop after given command to stop
-- multi_controller_CBF.py doesn't generalize well to 8 robots
-- multi_controller_PrSBC.py is not currently implemented
+### Current Issues (As of 11/17/2022):
+- Circle Cross (8 robot test) runs slowly in CoppeliaSim
+
+
+

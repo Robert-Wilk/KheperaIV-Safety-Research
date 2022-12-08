@@ -1,10 +1,12 @@
 from rps.utilities.barrier_certificates import *
+
+from utilities.Telemetry import Telemetry
 from utilities.controllers import *
 
 from utilities import util
 
 import numpy as np
-
+import random
 
 """
 Implements CBF on multiple Khepera IV robots in Coppelia Sim
@@ -53,24 +55,37 @@ uni_barrier_cert = create_unicycle_barrier_certificate(safety_radius=safety_radi
 # TODO: see if we can move from using custom version of position_uni_clf_controller
 position_uni_clf_controller = create_clf_unicycle_pose_controller()
 
-loop = True
+x_rand_span_x = 0.02 * np.random.randint(3, 4, (1, n)) # setting up position error range for each robot,
+x_rand_span_y = 0.02 * np.random.randint(1, 4, (1, n)) # rand_span serves as the upper bound of uncertainty for each of the robot
 
+x_rand_span_xy = np.concatenate((x_rand_span_x, x_rand_span_y))
+
+pos_error = np.zeros((2, n))
+
+loop = True
+stopped = np.zeros(len(agents))
+
+# test_name = input('Enter name of Map: ')
+test_name = 'Plus Cross'
+telemetry = Telemetry(len(agents), test_name, 'SBC', do_uBox=True)
 while loop:
 
     # ALGORITHM
     positions = np.array([agent.get_position(sim) for agent in agents])
 
     # reshape positions so that its 2 x n
-    x = positions.T
+    x = positions.T.copy()
 
-    # Initialize a velocities variable
-    si_velocities = np.zeros((2, n))
+    # add noise
+    x[:2, :] += pos_error
+    pos_error = x_rand_span_xy * ((np.random.rand(2, n) - 0.5) * 2.0)
+    # x[:2, :] += .1 * random.random()
 
     # get distance to gaol for all robots
     d = np.sqrt((x_goal[0] - x[0]) ** 2 + (x_goal[1] - x[1]) ** 2)
 
     # stop if distance threshold is met
-    if (d < .05).all():
+    if (d < .05).all() or (stopped == 1).all():
         util.stop_all(sim, agents)
         loop = False
         continue
@@ -78,10 +93,25 @@ while loop:
     # Use a position controller to drive to the goal position
     dxu = position_uni_clf_controller(x, x_goal)
 
+
+    for i in range(len(agents)):
+        if round(d[i], 2) < .05 or stopped[i] == 1:
+            dxu[0, i] = 0
+            dxu[1, i] = 0
+            stopped[i] = 1
+
     # Use the barrier certificates to make sure that the agents don't collide
     dxu = uni_barrier_cert(dxu, x)
 
     util.set_velocities(sim, agents, dxu)
 
+    telemetry.update(x, positions)
+
 input('Press any key to continue')
 sim.stopSimulation()
+
+telemetry.create_graph(.33, False, error_bound_x=x_rand_span_x, error_bound_y=x_rand_span_y)
+telemetry.create_graph(.66, False, error_bound_x=x_rand_span_x, error_bound_y=x_rand_span_y)
+telemetry.create_graph(error_bound_x=x_rand_span_x, error_bound_y=x_rand_span_y)
+telemetry.create_graph(min_dist=True)
+telemetry.create_graph(minest_dist=True, error_bound_x=x_rand_span_x, error_bound_y=x_rand_span_y)

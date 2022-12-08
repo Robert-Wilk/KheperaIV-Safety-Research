@@ -43,7 +43,7 @@ targets = np.array([util.get_target_position(sim, target) for target in targets]
 x_goal = targets.T
 
 # PrSBC Parameters
-safety_radius = 0.20
+safety_radius = 0.20 # try .07
 confidence_level = 0.90
 
 # Create PrSBC using unicycle dynamics
@@ -66,10 +66,11 @@ x_rand_span_y = 0.02 * np.random.randint(1, 4, (1, n)) # rand_span serves as the
 
 x_rand_span_xy = np.concatenate((x_rand_span_x, x_rand_span_y))
 
+pos_error = np.zeros((2, n))
 
 # graphing
-test_name = input('Enter name of test: ')
-telemetry = Telemetry(len(agents), test_name, 'PrSBC')
+test_name = input('Enter name of Map: ')
+telemetry = Telemetry(len(agents), test_name, 'PrSBC', do_uBox=True)
 
 while loop:
 
@@ -77,18 +78,13 @@ while loop:
     positions = np.array([agent.get_position(sim) for agent in agents])
 
     # reshape poses so that its 2 x n
-    x = positions.T
+    x = positions.T.copy()
 
 
     # Add fake noise over ground-truth poses (will get removed for real-world uses)
-    # print(x)
-    x[:2, :] += .1 * random.random()
-    # print(x)
-    # EVERYTHING WORKS CORRECTLY EXCEPT FOR WHEN NOISE IS ADDED
-    # NOISE EQUATION MIGHT BE INCORRECT
-
-    # Initialize a velocities variable
-    si_velocities = np.zeros((2, n))
+    x[:2, :] += pos_error
+    pos_error = x_rand_span_xy * ((np.random.rand(2, n) - 0.5) * 2.0)
+    # x[:2, :] += .1 * random.random()
 
     # get distance to gaol for all robots
     d = np.sqrt((x_goal[0] - x[0]) ** 2 + (x_goal[1] - x[1]) ** 2)
@@ -103,9 +99,7 @@ while loop:
     dxu = position_uni_clf_controller(x, x_goal)
 
     # Use the barrier certificates to make sure that the agents don't collide
-    # TODO: Robots seem to go in circles instead of going the correct direction
-    #       maybe look into Matlab remote API
-    dxu = uni_barrier_cert(dxu, x) # DONT PASS UNCERTAINTY FOR NOW x_rand_span_xy, v_rand_span
+    dxu = uni_barrier_cert(dxu, x, x_rand_span_xy, v_rand_span)
 
     for i in range(len(agents)):
         if round(d[i], 2) < .05 or stopped[i] == 1:
@@ -121,7 +115,8 @@ while loop:
 input('Press any key to continue')
 sim.stopSimulation()
 
-telemetry.create_graph(.33, False)
-telemetry.create_graph(.66, False)
-telemetry.create_graph()
+telemetry.create_graph(.33, False, error_bound_x=x_rand_span_x, error_bound_y=x_rand_span_y)
+telemetry.create_graph(.66, False, error_bound_x=x_rand_span_x, error_bound_y=x_rand_span_y)
+telemetry.create_graph(error_bound_x=x_rand_span_x, error_bound_y=x_rand_span_y)
 telemetry.create_graph(min_dist=True)
+telemetry.create_graph(minest_dist=True, error_bound_x=x_rand_span_x, error_bound_y=x_rand_span_y)

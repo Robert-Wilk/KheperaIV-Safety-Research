@@ -17,7 +17,10 @@ from khepera_communicator.msg import K4_controls, SensorReadings
 # Server socket port input at script launch
 print("========== Khepera IV Communicatoion Driver Node ==========")
 
-var = input("Please enter the last three digit of the khepera's IP: ")
+if (len(sys.argv) < 2):
+    var = input("Please enter the last three digit of the khepera's IP: ")
+else:
+    var = sys.argv[1]
 print("You entered: ", var)
 KHEP_IP_NO = int(var) #UDP Port number of this Khepera robot
 
@@ -74,7 +77,7 @@ def timer_callback(event):
         message = str(W) + 'x' + str(V)
         serverSock.sendto(message.encode('utf-8'), addr)
         # serverSock.recv(1024)
-        rospy.sleep(.25)
+        rospy.sleep(.25) # for single/multi control
 
 
 def send_cmd():

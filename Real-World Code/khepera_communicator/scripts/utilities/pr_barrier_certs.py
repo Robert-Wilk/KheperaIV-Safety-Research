@@ -173,7 +173,7 @@ def create_pr_si_barrier_certificate(gamma=100, safety_radius=0.17, magnitude_li
                 b2_y, b1_y, sigma = trap_cdf_inv(XRandSpan[1, i], XRandSpan[1, j], x[1, i] - x[1, j], confidence_level)
 
                 if (b2_x < 0 and b1_x > 0) or (b2_x > 0 and b1_x < 0):
-                    print('WARNING: distance between robots on x smaller than error bound!')
+                    # print('WARNING: distance between robots on x smaller than error bound!')
                     b_x = 0
                 elif (b1_x < 0) and (b2_x < b1_x) or (b2_x < 0 and b2_x > b1_x):
                     b_x = b1_x
@@ -181,10 +181,10 @@ def create_pr_si_barrier_certificate(gamma=100, safety_radius=0.17, magnitude_li
                     b_x = b2_x
                 else:
                     b_x = b1_x
-                    print('WARNING: no uncertainty or sigma = 0.5 on x')  # b1 = b2 or no uncertainty
+                    # print('WARNING: no uncertainty or sigma = 0.5 on x')  # b1 = b2 or no uncertainty
 
                 if (b2_y < 0 and b1_y > 0) or (b2_y > 0 and b1_y < 0):
-                    print('WARNING: distance between robots on y smaller than error bound!')
+                    # print('WARNING: distance between robots on y smaller than error bound!')
                     b_y = 0
                 elif (b1_y < 0 and b2_y < b1_y) or (b2_y < 0 and b2_y > b1_y):
                     b_y = b1_y
@@ -192,7 +192,7 @@ def create_pr_si_barrier_certificate(gamma=100, safety_radius=0.17, magnitude_li
                     b_y = b2_y
                 else:
                     b_y = b1_y
-                    print('WARNING: no uncertainty or sigma = 0.5 on y')
+                    # print('WARNING: no uncertainty or sigma = 0.5 on y')
 
                 A[count, (2 * i)] = -2 * b_x  # matlab original: A(count, (2*i-1):(2*i)) = -2*([b_x;b_y]);
                 A[count, (2 * i + 1)] = -2 * b_y

@@ -18,7 +18,7 @@ from rps.utilities.controllers import *
 
 start = time.time()
 
-rospy.init_node('Central_Algorithm', anonymous=True)
+rospy.init_node('Central_Algorithm_Single', anonymous=True)
 
 # Get all the node names for all the currently running K4_Send_Cmd nodes (all running Kheperas)
 # Get the node names of all the current running nodes
@@ -30,9 +30,9 @@ ip_num_list = [x[13:16] for x in khep_node_list]
 khep_node_cnt = len(khep_node_list)
 
 # Establish all the publishers to each "K4_controls_" topic, corresponding to each K4_Send_Cmd node, which corresponds to each Khepera robot
-# THIS IS FOR A SINGLE ROBOT WITH IP 192.168.1.104
-pub = rospy.Publisher('/K4_controls_177', K4_controls, queue_size = 10)
-khep_node_cnt = len(khep_node_list)
+# THIS IS FOR A SINGLE ROBOT
+pub = rospy.Publisher('K4_controls_' + str(ip_num_list[0]), K4_controls, queue_size = 10)
+khep_node_cnt = 1
 
 # globals
 si_goal = np.array([[-1.1], [1.0]]) # changes based on Optitrack setup
@@ -113,7 +113,7 @@ def callback(data, args):
 def central():
 	global sub, flag
 
-	for i in range(khep_node_cnt):
+	for i in range(1):
 		# Automatically subscribes to existing vicon topics corresponding to each khepera
 		print('Created Subscriber: %s\n' % '/vrpn_client_node/KhpIV' + ip_num_list[i] + '/pose')
 		sub.append(rospy.Subscriber('/vrpn_client_node/KhpIV' + ip_num_list[i] + '/pose', PoseStamped, callback, i ))

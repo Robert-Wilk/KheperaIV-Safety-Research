@@ -1,6 +1,7 @@
 # KheperaIV-Safety-Research
 SBC and PrSBC research on Khepera IV robots in simulated and real-world environments
 
+![Research Poster](Research_Poster.png)
 
 This code utilizes the KheperaIV which is not native to CoppeliaSim. To add the KheperaIV robot to CoppeliaSim head to [this Github repo](https://github.com/EAPH/K4_Model_VREP), download the files, and import into CoppeliaSim. To learn more about the KheperaIV robot model in CoppeliaSim check out [Farias et al.'s research paper](https://doi.org/10.1016/j.ifacol.2017.08.1721).
 
